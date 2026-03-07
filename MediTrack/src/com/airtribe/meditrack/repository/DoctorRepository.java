@@ -17,6 +17,7 @@ public class DoctorRepository {
     public List<Doctor> findByName(String name) {
         List<Doctor> result = new ArrayList<>();
 
+
         for (Doctor d : doctorMap.values()) {
             if (d.getName().equalsIgnoreCase(name)) {
                 result.add(d);

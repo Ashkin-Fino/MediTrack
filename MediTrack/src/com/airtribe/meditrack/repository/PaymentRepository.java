@@ -20,7 +20,6 @@ public class PaymentRepository {
     }
 
     public List<PaymentReceipt> findByBillSummaryId(String billSummaryId) {
-
         List<PaymentReceipt> result = new ArrayList<>();
 
         for (PaymentReceipt r : receiptMap.values()) {
