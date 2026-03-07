@@ -10,6 +10,7 @@ public class Constants {
 
     public static final String DOCTOR_FILE = "doctors.csv";
 
+
     public static final String APPOINTMENT_FILE = "appointments.csv";
 
 }

@@ -14,7 +14,6 @@ public class DoctorRepository {
     public Doctor findById(String id) {
         return doctorMap.get(id);
     }
-
     public List<Doctor> findByName(String name) {
         List<Doctor> result = new ArrayList<>();
 
