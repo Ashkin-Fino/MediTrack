@@ -11,7 +11,6 @@ public class Validator {
         if (name == null || name.trim().isEmpty()) {
             throw new InvalidDataException("Name cannot be empty");
         }
-
     }
 
     public static void validateEmail(String email) {

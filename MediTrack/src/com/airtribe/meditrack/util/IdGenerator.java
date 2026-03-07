@@ -19,6 +19,7 @@ public class IdGenerator {
         return "A" + appointmentCounter++;
     }
 
+
     public static String generateBillId() {
         return "B" + billCounter++;
     }

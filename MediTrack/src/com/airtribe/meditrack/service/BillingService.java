@@ -12,7 +12,6 @@ public class BillingService {
     public BillingService(
             BillRepository repository,
             AppointmentService appointmentService) {
-
         this.repository = repository;
         this.appointmentService = appointmentService;
     }

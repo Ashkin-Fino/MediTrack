@@ -25,4 +25,5 @@ public class Patient extends Person {
     public List<String> getMedicalHistory() {
         return Collections.unmodifiableList(medicalHistory);
     }
+
 }

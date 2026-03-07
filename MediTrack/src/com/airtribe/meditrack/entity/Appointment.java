@@ -73,4 +73,6 @@ public class Appointment {
     public List<AppointmentObserver> getObservers() {
         return Collections.unmodifiableList(observers);
     }
+
+
 }
