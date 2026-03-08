@@ -3,6 +3,7 @@ package com.airtribe.meditrack.service;
 import com.airtribe.meditrack.entity.*;
 import com.airtribe.meditrack.enums.AppointmentStatus;
 import com.airtribe.meditrack.interfaces.Searchable;
+import com.airtribe.meditrack.observer.BillingObserver;
 import com.airtribe.meditrack.observer.PatientObserver;
 import com.airtribe.meditrack.repository.AppointmentRepository;
 
@@ -17,13 +18,15 @@ public class AppointmentService implements Searchable<Appointment> {
 
     private static final Scanner scanner = new Scanner(System.in);
     private final AppointmentRepository repository;
+    private final BillingService billingService;
 
-    public AppointmentService(AppointmentRepository repository) {
+    public AppointmentService(AppointmentRepository repository, BillingService billingService) {
         /*
             Parameterized constructor for AppointmentService with dependency injection of
             AppointmentRepository.
         */
         this.repository = repository;
+        this.billingService = billingService;
     }
 
     public Appointment createAppointment(Patient patient, Doctor doctor) {
@@ -35,21 +38,24 @@ public class AppointmentService implements Searchable<Appointment> {
         */
         Appointment appointment = new Appointment(patient, doctor);
         appointment.addObserver(new PatientObserver(patient));
-        repository.save(appointment);
+        
+        Bill bill = billingService.createBill(appointment);
+        bill.addItem("Appointment Fee", 100);
+        appointment.addObserver(new BillingObserver(bill));
 
+        repository.save(appointment);
         return appointment;
     }
 
-    public Appointment updateStatus(String appointmentId, AppointmentStatus status) {
-
-        Appointment appointment = repository.findById(appointmentId);
-
+    public Appointment updateStatus(Appointment appointment, AppointmentStatus status) {
+        /*
+            This method updates the status of the given appointment to the specified status. If the
+            appointment is null, return null.
+        */
         if (appointment == null) {
             return null;
         }
-
         appointment.setStatus(status);
-
         return appointment;
     }
 

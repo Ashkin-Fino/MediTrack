@@ -35,11 +35,7 @@ public class Bill {
     }
 
     public double calculateTotal() {
-        double total = items.values()
-                .stream()
-                .mapToDouble(Integer::doubleValue)
-                .sum();
-
+        double total = items.values().stream().mapToDouble(Integer::doubleValue).sum();
         total -= (total * discount / 100.0);
         this.amount = total;
         return total;

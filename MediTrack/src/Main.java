@@ -1,4 +1,5 @@
 import com.airtribe.meditrack.entity.*;
+import com.airtribe.meditrack.enums.AppointmentStatus;
 import com.airtribe.meditrack.repository.*;
 import com.airtribe.meditrack.service.*;
 import com.airtribe.meditrack.util.UiHelper;
@@ -18,13 +19,14 @@ public class Main {
         PatientRepository patientRepository = new PatientRepository();
         AppointmentRepository appointmentRepository = new AppointmentRepository();
         BillRepository billRepository = new BillRepository();
+        PaymentRepository paymentRepository = new PaymentRepository();
 
         DoctorService doctorService = new DoctorService(doctorRepository);
         PatientService patientService = new PatientService(patientRepository);
+        PaymentService paymentService = new PaymentService(paymentRepository);
+        BillingService billingService = new BillingService(billRepository, paymentService);
 
-        AppointmentService appointmentService = new AppointmentService(appointmentRepository);
-
-        BillingService billingService = new BillingService(billRepository, appointmentService);
+        AppointmentService appointmentService = new AppointmentService(appointmentRepository, billingService);
 
         boolean running = true;
 
@@ -46,8 +48,9 @@ public class Main {
                 case 5 -> createAppointment(appointmentService, patientService, doctorService);
                 case 6 -> viewAppointments(appointmentService);
                 case 7 -> cancelAppointment(appointmentService);
-                case 8 -> generateBill(appointmentService, billingService);
-                case 9 -> makePayment(billingService);
+                case 8 -> consultDoctor(appointmentService);
+                case 9 -> generateBill(appointmentService, billingService);
+                case 10 -> makePayment(billingService);
                 case 0 -> running = false;
                 default -> System.out.println("Invalid option");
             }
@@ -230,29 +233,63 @@ public class Main {
         service.cancelAppointment(appointment);
     }
 
-    private static void generateBill(AppointmentService appointmentService, BillingService billingService) {
-
-        System.out.print("Appointment ID: ");
-        String id = scanner.nextLine();
-
-        BillSummary summary = billingService.finalizeBill(id);
-
-        if (summary != null) {
-            System.out.println("Bill ID: " + summary.getBillSummaryId());
-            System.out.println("Total: " + summary.getTotalAmount());
-        } else {
-            System.out.println("Appointment not found");
+    private static void consultDoctor(AppointmentService service) {
+        /*
+            This method prompts the user to enter a doctor's or patient's name, 
+            searches for appointments matching that name using the AppointmentService,
+            allows the user to choose an appointment from the returned list, and then
+            updates the status of the selected appointment to CONSULTED_DOCTOR.
+        */
+        System.out.print("Enter Doctor/Patient name: ");
+        String name = scanner.nextLine();
+        List<Appointment> appointments = service.searchByName(name);
+        if (appointments.isEmpty()) {
+            System.out.println("Returning to main menu...");
+            return;
         }
+        Appointment appointment = service.chooseAppointment(appointments);
+
+        System.out.println("Consulting....");
+        service.updateStatus(appointment, AppointmentStatus.CONSULTED_DOCTOR);
+        System.out.println("Consultation Completed!");
+    }
+
+    private static void generateBill(AppointmentService appointmentService, BillingService billingService) {
+        /*
+            This method prompts the user to enter a doctor's or patient's name, 
+            searches for appointments matching that name using the AppointmentService,
+            allows the user to choose an appointment from the returned list, checks if the
+            appointment status is CONSULTED_DOCTOR, and if so, finalizes the bill for that
+            appointment using the BillingService and prints the bill summary.
+        */
+        System.out.print("Enter Doctor/Patient name: ");
+        String name = scanner.nextLine();
+        List<Appointment> appointments = appointmentService.searchByName(name);
+        if (appointments.isEmpty()) {
+            System.out.println("Returning to main menu...");
+            return;
+        }
+        Appointment appointment = appointmentService.chooseAppointment(appointments);
+
+        if (appointment.getStatus() != AppointmentStatus.CONSULTED_DOCTOR) {
+            System.out.println("Cannot finalize bill before consulting doctor. \nReturning to main menu...");
+            return;
+        }
+
+        BillSummary summary = billingService.finalizeBill(appointment);
+        System.out.println("Printing Bill....");
+        System.out.println("Bill ID: " + summary.getBillId());
+        System.out.println("Total: " + summary.getTotalAmount());
     }
 
     private static void makePayment(BillingService billingService) {
 
-        System.out.print("BillSummary ID: ");
+        System.out.print("Scanning Bill....Enter Bill ID: ");
         String id = scanner.nextLine();
+        System.out.print("Enter Payment Method: ");
+        String method = scanner.nextLine();
 
-        BillSummary summary = new BillSummary(id, 0, java.time.LocalDateTime.now());
-
-        PaymentReceipt receipt = billingService.proceedToPayment(summary);
+        PaymentReceipt receipt = billingService.proceedToPayment(id, method);
 
         System.out.println("Payment Status: " + receipt.getStatus());
     }

@@ -7,48 +7,48 @@ import com.airtribe.meditrack.repository.BillRepository;
 public class BillingService {
 
     private final BillRepository repository;
-    private final AppointmentService appointmentService;
+    private final PaymentService paymentService;
 
-    public BillingService(BillRepository repository, AppointmentService appointmentService) {
+    public BillingService(BillRepository repository, PaymentService paymentService) {
         /*
-            Parameterized constructor to initialize the BillRepository and 
-            AppointmentService dependencies for the BillingService class.
+            Parameterized constructor to initialize the BillRepository and PaymentService 
+            dependencies for the BillingService class.
         */
         this.repository = repository;
-        this.appointmentService = appointmentService;
+        this.paymentService = paymentService;
     }
 
-    public BillSummary finalizeBill(String appointmentId) {
-
-        Appointment appointment = appointmentService.searchById(appointmentId);
-
-        if (appointment == null) {
-            return null;
-        }
-
+    public Bill createBill(Appointment appointment) {
+        /*
+            Creates a new Bill and returns it.
+        */
         Bill bill = new Bill(appointment);
+        repository.save(bill);
+        return bill;
+    }
 
-        bill.addItem("Consultation Fee", 500);
-        bill.addItem("Medical Service", 300);
+    public BillSummary finalizeBill(Appointment appointment) {
+        /*
+            Finalizes the bill for the given appointment by adding items, applying discounts,
+            and generating a BillSummary. It also updates the appointment status to BILL_FINALIZED.
+        */
+        Bill bill = repository.findByAppointmentId(appointment.getId());
+        bill.addItem("Service Fee", 80);
+
+        System.out.println("Discount given? Enter percentage:");
+        int discount = 10; // Simulating user input for discount
+        bill.setDiscount(discount);
 
         BillSummary summary = bill.generateBillSummary();
-
-        repository.save(bill);
-
         appointment.setStatus(AppointmentStatus.BILL_FINALIZED);
-
         return summary;
     }
 
-    public PaymentReceipt proceedToPayment(BillSummary billSummary) {
-
-        PaymentReceipt receipt = new PaymentReceipt(
-                billSummary.getBillSummaryId(),
-                billSummary.getTotalAmount(),
-                "UPI",
-                com.airtribe.meditrack.enums.PaymentStatus.SUCCESS
-        );
-
-        return receipt;
+    public PaymentReceipt proceedToPayment(String billId, String paymentMethod) {
+        /*
+            Proceeds to payment for the given bill ID and returns a PaymentReceipt.
+        */
+        BillSummary billSummary = repository.findById(billId).getBillSummary();
+        return paymentService.createPaymentReceipt(billSummary, paymentMethod);
     }
 }

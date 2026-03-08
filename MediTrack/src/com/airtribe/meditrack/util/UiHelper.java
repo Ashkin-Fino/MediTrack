@@ -13,8 +13,9 @@ public class UiHelper {
         System.out.println("║5. Create Appointment        ║");
         System.out.println("║6. View Appointments         ║");
         System.out.println("║7. Cancel Appointment        ║");
-        System.out.println("║8. Generate Bill             ║");
-        System.out.println("║9. Make Payment              ║");
+        System.out.println("║8. Consult Doctor            ║");
+        System.out.println("║9. Generate Bill             ║");
+        System.out.println("║10. Make Payment             ║");
         System.out.println("║0. Exit                      ║");
         System.out.println("╚═════════════════════════════╝");
 
