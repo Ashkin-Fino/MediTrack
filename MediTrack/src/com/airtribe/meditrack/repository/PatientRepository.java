@@ -52,12 +52,11 @@ public class PatientRepository {
         patientMap.remove(id);
     }
 
-    private void persist() {
+    public void persist() {
         // Implement file or database persistence here
     }
 
-    private Map<String, Doctor> load() {
+    public void load() {
         // Implement file or database loading here
-        return new HashMap<>();
     }
 }

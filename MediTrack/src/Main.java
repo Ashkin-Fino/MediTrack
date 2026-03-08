@@ -21,12 +21,27 @@ public class Main {
         BillRepository billRepository = new BillRepository();
         PaymentRepository paymentRepository = new PaymentRepository();
 
+        // Load data from JSON files
+        doctorRepository.load();
+        patientRepository.load();
+        appointmentRepository.load();
+        billRepository.load();
+        paymentRepository.load();
+
         DoctorService doctorService = new DoctorService(doctorRepository);
         PatientService patientService = new PatientService(patientRepository);
         PaymentService paymentService = new PaymentService(paymentRepository);
         BillingService billingService = new BillingService(billRepository, paymentService);
-
         AppointmentService appointmentService = new AppointmentService(appointmentRepository, billingService);
+
+        // Add shutdown hook to persist data when the application exits
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            doctorRepository.persist();
+            patientRepository.persist();
+            appointmentRepository.persist();
+            billRepository.persist();
+            paymentRepository.persist();
+        }));
 
         boolean running = true;
 
@@ -36,7 +51,7 @@ public class Main {
             try {
                 choice = scanner.nextInt();
             } catch (InputMismatchException e) {
-                choice = 10;
+                choice = 11;
             }
             scanner.nextLine();
 
@@ -290,7 +305,10 @@ public class Main {
         String method = scanner.nextLine();
 
         PaymentReceipt receipt = billingService.proceedToPayment(id, method);
-
+        if (receipt == null) {
+            System.out.println("Payment failed. Returning to main menu...");
+            return;
+        }
         System.out.println("Payment Status: " + receipt.getStatus());
     }
 }

@@ -48,7 +48,12 @@ public class BillingService {
         /*
             Proceeds to payment for the given bill ID and returns a PaymentReceipt.
         */
-        BillSummary billSummary = repository.findById(billId).getBillSummary();
+        Bill bill = repository.findById(billId);
+        if (bill == null) {
+            System.out.println("Bill not found for ID: " + billId);
+            return null;
+        }
+        BillSummary billSummary = bill.generateBillSummary();
         return paymentService.createPaymentReceipt(billSummary, paymentMethod);
     }
 }

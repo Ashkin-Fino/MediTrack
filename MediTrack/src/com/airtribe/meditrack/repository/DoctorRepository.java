@@ -1,6 +1,9 @@
 package com.airtribe.meditrack.repository;
 
 import com.airtribe.meditrack.entity.Doctor;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class DoctorRepository {
@@ -51,12 +54,27 @@ public class DoctorRepository {
         doctorMap.remove(id);
     }
 
-    private void persist() {
-        // Implement file or database persistence here
+    public void persist() {
+        // ObjectMapper objectMapper = new ObjectMapper();
+        // try {
+        //     objectMapper.writeValue(new File(FILE_PATH), doctorMap.values());
+        // } catch (IOException e) {
+        //     System.err.println("Error while saving doctors to file: " + FILE_PATH);
+        //     e.printStackTrace();
+        // }
     }
 
-    private Map<String, Doctor> load() {
-        // Implement file or database loading here
-        return new HashMap<>();
+    public void load() {
+        // ObjectMapper objectMapper = new ObjectMapper();
+        // try {
+        //     List<Doctor> doctors = objectMapper.readValue(new File(FILE_PATH), new TypeReference<List<Doctor>>() {});
+        //     doctorMap.clear();
+        //     for (Doctor doctor : doctors) {
+        //         doctorMap.put(doctor.getId(), doctor);
+        //     }
+        // } catch (IOException e) {
+        //     System.err.println("Error while loading doctors from file: " + FILE_PATH);
+        //     e.printStackTrace();
+        // }
     }
 }
