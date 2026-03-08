@@ -18,11 +18,11 @@ public class Appointment {
     private AppointmentStatus status;
     private final List<AppointmentObserver> observers;
 
-    public Appointment(Patient patient, Doctor doctor, LocalDate date) {
+    public Appointment(Patient patient, Doctor doctor) {
         this.id = generateId();
         this.patient = patient;
         this.doctor = doctor;
-        this.date = date;
+        this.date = LocalDate.now();
         this.status = AppointmentStatus.APPOINTMENT_SCHEDULED;
         this.observers = new ArrayList<>();
     }

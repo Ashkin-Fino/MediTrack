@@ -16,6 +16,13 @@ public class PatientObserver implements AppointmentObserver {
 
     @Override
     public void update(Appointment appointment) {
+        /*
+            This method is called when the appointment status changes. It checks if the
+            appointment is null or if the appointment's patient does not match the
+            observer's patient. If either condition is true, it returns without doing
+            anything. Otherwise, it prints a notification message with the patient's name,
+            appointment ID, doctor's name, and new appointment status.
+        */
         if (appointment == null) {
             return;
         }

@@ -26,4 +26,14 @@ public class Patient extends Person {
         return Collections.unmodifiableList(medicalHistory);
     }
 
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "id='" + getId() + '\'' +
+                ", name='" + getName() + '\'' +
+                ", email='" + getEmail() + '\'' +
+                ", age=" + getAge() +
+                ", medicalHistory=" + medicalHistory +
+                '}';
+    }
 }

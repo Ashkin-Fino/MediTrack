@@ -9,9 +9,11 @@ public class BillingService {
     private final BillRepository repository;
     private final AppointmentService appointmentService;
 
-    public BillingService(
-            BillRepository repository,
-            AppointmentService appointmentService) {
+    public BillingService(BillRepository repository, AppointmentService appointmentService) {
+        /*
+            Parameterized constructor to initialize the BillRepository and 
+            AppointmentService dependencies for the BillingService class.
+        */
         this.repository = repository;
         this.appointmentService = appointmentService;
     }

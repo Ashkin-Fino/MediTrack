@@ -22,4 +22,15 @@ public class Doctor extends Person {
     public void setSpecialization(String specialization) {
         this.specialization = specialization;
     }
+
+    @Override
+    public String toString() {
+        return "Doctor{" +
+                "id='" + getId() + '\'' +
+                ", name='" + getName() + '\'' +
+                ", email='" + getEmail() + '\'' +
+                ", age=" + getAge() +
+                ", specialization='" + specialization + '\'' +
+                '}';
+    }
 }
